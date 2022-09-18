@@ -120,6 +120,8 @@ body {
 	background-color: #8f7373;
     width: auto;
     cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
 .Button:hover {

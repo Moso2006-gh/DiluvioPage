@@ -49,6 +49,7 @@ let matchSudoku = [
     [0, 0, 0, 0, 0, 0, 0,],
     [0, 0, 0, 0, 0, 0, 0,],
 ]; //Inicialización del sudoku
+let generando = false;
 
 $('.Player').on('click', (event) => {
     togglePlayerList(event.target.parentElement); //Cambiar en la lista
@@ -92,6 +93,7 @@ function togglePlayerList(player)  {
 
 function CreateMatch () {
     $('.GenerateButton').text('Generando...'); //Feedback al usuario
+    generando = true; //stop condition
     $('.ficha').remove(); //Eliminar si hay fichas
 
     let sudoku = sudokuArray[Math.floor(Math.random() * sudokuArray.length)] //Elejir sudoku base
@@ -134,15 +136,16 @@ function CreateMatch () {
         scrollTop: $(".sudoku").offset().top
     }, 1000);
 
-    setTimeout(() => {
-        $('.ficha').remove(); //Eliminar fichas otra vez por si acaso
-        $('.GenerateButton').text('Generar'); // Volver a cambiar texto
+    setTimeout(async () => {
         if(Object.keys(activePlayers).length <= 3 ){ //Elegir modo de juego
-            NormalPlacement();
+            await NormalPlacement();
         }
         else {
-            ExcesivePlacement();
+            await ExcesivePlacement();
         }
+
+        generando = false; //Stop condition
+        $('.GenerateButton').text('Generar'); // Volver a cambiar texto
     }, 1500) //Dar tiempo
 }
 
@@ -201,7 +204,9 @@ async function AppendImage(src, m, n) {
     await new Promise(resolve => setTimeout(resolve, 50)); //Lag
 }
 
-$('.GenerateButton').on('click', () => CreateMatch()); //Añadir el evento
+$('.GenerateButton').on('click', () => {
+    if(!generando) CreateMatch();
+}); //Añadir el evento
 
 $('.ResetButton').on('click', () => {
     $('.ficha').remove(); //Eliminar fichas
